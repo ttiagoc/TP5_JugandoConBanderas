@@ -5,76 +5,142 @@ import './App.css';
 function App() {
 
   const [listaPaises, setAllPaises] = useState([]);
-  const [paisRandom, setPaisRandom] = useState({});
+  const [paisRandom, setPaisRandom] = useState({ flag: "https://img.tapimg.net/market/images/5f49418a4764b717ee0cee8bdd7c02fd.jpg?imageView2/0/w/720/h/405/q/80/format/jpg/interlace/1/ignore-error/1" });
   const [puntos, setPuntos] = useState(0)
 
-  // let aOcultar = document.querySelector("#ocultar")
-  //  aOcultar.style.display = 'none';
-  
 
+  const SetRandomCountry = () => {
 
-
-  function SetRandomCountry(){
- 
     let numRandom = Math.floor(Math.random() * 220);
-    setPaisRandom(listaPaises[numRandom])
     
+    setPaisRandom(listaPaises[numRandom])
+    console.log(listaPaises[numRandom].name)
+    return;
+
+  }
+
+  const CargarPaises = () => {
+    axios
+      .get("https://countriesnow.space/api/v0.1/countries/flag/images")
+      .then((result) => {
+
+        let array = result.data.data
+        setAllPaises(array)
+
+      }).catch((error) => {
+        console.log(error);
+      });
+
   }
 
   useEffect(() => {
-  axios
-  .get("https://countriesnow.space/api/v0.1/countries/flag/images")
-  .then((result) => {
+    CargarPaises()
+    let aMostrar = document.querySelector('#gameUtilities')
+    let aMostrar2 = document.getElementById('puntos')
+    let aMostrar3 = document.getElementById('ayuda')
 
-    let array = result.data.data
-    setAllPaises(array)
-    
-  })
-   .catch((error) => {
-    console.log(error);
-  });
-
-
- 
-
-  },[]);
+    aMostrar.style.display = 'none'
+    aMostrar2.style.display = 'none'
+    aMostrar3.style.display = 'none'
+   
+  }, [])
 
 
+  function ComenzarJuego() {
 
+    SetRandomCountry()
 
-  function checkAnswer(e){
-     e.preventDefault();
-      let nombreInsertado = e.target.nombrePais.value
-     
-      if (nombreInsertado.toLowerCase() === (paisRandom.name).toLowerCase()) {
-        setPuntos(puntos+10)
-        SetRandomCountry()
-        return console.log("bien")
-      }else{
-    
-        setPuntos(puntos-1)
-        return console.log("mal")
-      }
+    let ocultar = document.querySelector('#startButton');
+    let aMostrar = document.querySelector('#gameUtilities')
+    let aMostrar2 = document.getElementById('puntos')
+    let aMostrar3 = document.getElementById('ayuda')
+    ocultar.style.display = 'none'
+    aMostrar.style.display = 'block'
+    aMostrar2.style.display = 'block'
+    aMostrar3.style.display = 'block'
+   
   }
-  console.log(paisRandom.name)
+
+
+
+  function CheckAnswer(e) {
+
+    e.preventDefault();
+    let nombreInsertado = e.target.nombrePais.value
+
+    if (nombreInsertado.toLowerCase() === (paisRandom.name).toLowerCase()) {
+
+      SaltarMensaje(1)
+      setPuntos(puntos + 10)
+      SetRandomCountry()
+
+    } else {
+
+      SaltarMensaje(0)
+      SetRandomCountry()
+      setPuntos(puntos - 1)
+
+    }
+  }
+
+
+
+     const SaltarMensaje =  (numero) => {
+    
+     const mensaje = document.getElementById('mensaje');
+   
+      mensaje.textContent = numero == 0 ? 'INCORRECTO' : 'CORRECTO';
+      mensaje.style.backgroundColor = numero == 1 ? 'green' : 'red'
+      mensaje.style.display = 'block';
+
+      let randomX = Math.floor(Math.random() * window.innerWidth);
+      let randomY = Math.floor(Math.random() * window.innerHeight);
+      mensaje.style.left = `${randomX}px`;
+      mensaje.style.top = `${randomY}px`;
+
+      setTimeout(() => {
+        mensaje.style.display = 'none';
+      }, 2000);
+
+    
+
+  }
+
+    const PedirAyuda = () =>{
+
+    let contAyuda = document.getElementById('ayuda1');
+    contAyuda.append("el pais empieza con: " +  paisRandom.name[0]);
+
+
+
+    }
 
   return (
     <>
-    
-    <div className='container'>
-      <img src = {paisRandom.flag}  alt='flag' className='flagImg' id='ocultar' ></img>
-      
-      <button onClick={() =>  SetRandomCountry()} className='button'>Empezar</button>
-    
 
-      <form onSubmit={(e) => checkAnswer(e)} >
+      <div className='container'>
+        <img src={paisRandom.flag} alt='flag' className='flagImg'></img>
 
-        <div className='container2'>
-        <input type='text' name='nombrePais' placeholder='adivina el nombre' id='ocultar'></input>
-        <button type='submit' className='button' id='ocultar'>Enviar</button>
-        </div>
-      </form>
-      <h1 id='ocultar'>puntos: {puntos}</h1>
+        <button onClick={() => ComenzarJuego()} className='startButton' id='startButton'>Empezar</button>
+
+
+        <form onSubmit={(e) => CheckAnswer(e)}>
+
+          <div className='container2' id='gameUtilities'>
+            <input type='text' name='nombrePais' placeholder='Adivina el nombre' autoComplete='off'></input>
+            <button type='submit' className='button' onClick={() => SaltarMensaje()}>Enviar</button>
+          </div>
+        </form>
+
+
+        <h1 id='puntos'>PUNTOS: {puntos}</h1>
+        <div id="mensaje" className="mensaje"></div>
+        <button type='submit' id='ayuda' className='button' onClick={() => PedirAyuda()}>Ayuda</button>
+
+        
+    
+  
+
       </div>
     </>
   );
