@@ -1,13 +1,14 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import { useTimer } from 'react-timer-hook';
 
 function App() {
 
   const [listaPaises, setAllPaises] = useState([]);
   const [paisRandom, setPaisRandom] = useState({ flag: "https://img.tapimg.net/market/images/5f49418a4764b717ee0cee8bdd7c02fd.jpg?imageView2/0/w/720/h/405/q/80/format/jpg/interlace/1/ignore-error/1" });
   const [puntos, setPuntos] = useState(0)
+  const [ayuda, setAyuda] = useState("")
+  const [letrasMostradas, setLetrasMostradas] = useState([]);
   
   const [secondsLeft, setSecondsLeft] = useState(15);
  
@@ -15,13 +16,18 @@ function App() {
 
   const SetRandomCountry = () => {
 
+    setSecondsLeft(15)
+
+
     let numRandom = Math.floor(Math.random() * 220);
 
     setPaisRandom(listaPaises[numRandom])
     console.log(listaPaises[numRandom].name)
+   
     return;
 
   }
+
 
   const CargarPaises = () => {
     axios
@@ -122,8 +128,38 @@ function App() {
   }
 
   const PedirAyuda = () => {
-
+   let newLetra = CrearAyuda(paisRandom.name)
+  let textoAyuda = paisRandom.name.split('').map((newLetra, index) => (letrasMostradas.includes(index) ? newLetra : '-')).join('')
+   console.log(textoAyuda)
+   setAyuda(textoAyuda)
   }
+
+
+  const CrearAyuda = (pais) => {
+
+    console.log("Pais: " + pais)
+
+    if (letrasMostradas.length < pais.length) {
+      const indiceAleatorio = Math.floor(Math.random() * pais.length);
+     
+
+      if (!letrasMostradas.includes(indiceAleatorio)) {
+        setLetrasMostradas([...letrasMostradas, indiceAleatorio]);
+      } else {
+         CrearAyuda(); 
+      }
+
+   
+    }
+  };
+
+
+
+
+  
+
+
+
 
   const BajarSegundos = () => {
     setSecondsLeft(secondsLeft - 1);
@@ -144,7 +180,8 @@ function App() {
 
 
     }else{
-      //CheckAnswer()
+      setPuntos(puntos-1)
+      SetRandomCountry()
     }
 
       
