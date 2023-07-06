@@ -108,15 +108,12 @@ function App() {
 
     const mensaje = document.getElementById('mensaje');
 
-    if (numero === 0) {
-      mensaje.textContent === 'INCORRECTO';
-    }else{ 
-      if(numero === 1){
-      mensaje.textContent === 'CORRECTO';
-    }else{
-      mensaje.textContent === 'SIN TIEMPO'
-    }}
+    mensaje.textContent = numero === 0 ? 'INCORRECTO' : 'CORRECTO';
 
+    if (numero === 3) {
+      mensaje.textContent = 'SIN TIEMPO'
+    }
+    
     mensaje.style.backgroundColor = numero === 1 ? 'green' : 'red'
     mensaje.style.display = 'block';
 
@@ -135,7 +132,7 @@ function App() {
 
   useEffect(() => {
 
-    if (letrasMostradas == 3) {
+    if (letrasMostradas === 3) {
       let botonAyuda = document.querySelector('#ayuda');
       botonAyuda.style.opacity = 0.5;
       botonAyuda.disabled = true
@@ -219,6 +216,7 @@ function App() {
 
 
     }else{
+      
       SaltarMensaje(3)
       setPuntos(puntos-1)
       SetRandomCountry()
@@ -232,7 +230,7 @@ function App() {
     <>
 
       <div className='container'>
-      <p style={{color:'white', fontSize:'25px'}} id='intervalo'>Tiempo restante: {secondsLeft}</p>
+      <p style={{color:'white', fontSize:'25px'}} id='intervalo'>Tiempo restante: <span className='TextoColor'>{secondsLeft}</span></p>
         <img src={paisRandom.flag} alt='flag' className='flagImg'></img>
         <p className='LetrasAyuda'>{ayuda} {AgregarGuiones()}</p>
 
@@ -246,7 +244,7 @@ function App() {
           </div>
         </form>
 
-        <h1 id='puntos'>PUNTOS: {puntos}</h1>
+        <h1 id='puntos'>PUNTOS: <span className='TextoColor'>{puntos}</span></h1>
         <div id="mensaje" className="mensaje"></div>
         <button type='submit' id='ayuda' className='button' onClick={() => PedirAyuda()}>Ayuda</button>
         

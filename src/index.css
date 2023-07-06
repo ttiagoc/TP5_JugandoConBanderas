@@ -83,6 +83,10 @@ h1{
   color: white;
 }
 
+.TextoColor{
+  color: fuchsia;
+}
+
 .container2{
   display: flex;
   flex-direction: column;
