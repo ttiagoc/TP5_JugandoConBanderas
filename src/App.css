@@ -203,3 +203,9 @@ form {
   font-size: 30px;
 }
 
+.LetrasAyuda{
+  font-size: 30px;
+  color: white;
+  padding: -10;
+  text-decoration: underline;
+}

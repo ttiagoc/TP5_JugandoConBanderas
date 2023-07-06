@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import './App.css';
+import './index.css';
 
 function App() {
 
@@ -8,17 +8,18 @@ function App() {
   const [paisRandom, setPaisRandom] = useState({ flag: "https://img.tapimg.net/market/images/5f49418a4764b717ee0cee8bdd7c02fd.jpg?imageView2/0/w/720/h/405/q/80/format/jpg/interlace/1/ignore-error/1" });
   const [puntos, setPuntos] = useState(0)
   const [ayuda, setAyuda] = useState("")
-  const [letrasMostradas, setLetrasMostradas] = useState([]);
+  const [letrasMostradas, setLetrasMostradas] = useState(0);
   
   const [secondsLeft, setSecondsLeft] = useState(15);
  
-
-
   const SetRandomCountry = () => {
 
     setSecondsLeft(15)
-
-
+    setAyuda([])
+    setLetrasMostradas(0)
+    let botonAyuda = document.querySelector('#ayuda');
+    botonAyuda.disabled = false
+    botonAyuda.style.opacity = 1;
     let numRandom = Math.floor(Math.random() * 220);
 
     setPaisRandom(listaPaises[numRandom])
@@ -76,10 +77,8 @@ function App() {
 
   }
 
-
-
   function CheckAnswer(e) {
-    console.log(e)
+   
  
     e.preventDefault();
     let nombreInsertado = e.target.nombrePais.value
@@ -105,13 +104,20 @@ function App() {
   }
 
 
-
   const SaltarMensaje = (numero) => {
 
     const mensaje = document.getElementById('mensaje');
 
-    mensaje.textContent = numero == 0 ? 'INCORRECTO' : 'CORRECTO';
-    mensaje.style.backgroundColor = numero == 1 ? 'green' : 'red'
+    if (numero === 0) {
+      mensaje.textContent === 'INCORRECTO';
+    }else{ 
+      if(numero === 1){
+      mensaje.textContent === 'CORRECTO';
+    }else{
+      mensaje.textContent === 'SIN TIEMPO'
+    }}
+
+    mensaje.style.backgroundColor = numero === 1 ? 'green' : 'red'
     mensaje.style.display = 'block';
 
     let randomX = Math.floor(Math.random() * window.innerWidth - 20);
@@ -127,38 +133,71 @@ function App() {
 
   }
 
+  useEffect(() => {
+
+    if (letrasMostradas == 3) {
+      let botonAyuda = document.querySelector('#ayuda');
+      botonAyuda.style.opacity = 0.5;
+      botonAyuda.disabled = true
+  
+    }
+
+
+  },[letrasMostradas])
+
+
   const PedirAyuda = () => {
-   let newLetra = CrearAyuda(paisRandom.name)
-  let textoAyuda = paisRandom.name.split('').map((newLetra, index) => (letrasMostradas.includes(index) ? newLetra : '-')).join('')
-   console.log(textoAyuda)
-   setAyuda(textoAyuda)
+
+   
+
+    if (letrasMostradas < 3) {
+
+      let letra = CrearAyuda(paisRandom.name)
+
+      setAyuda([...ayuda, " ", letra])
+    
+      
+      setSecondsLeft(secondsLeft - 2)
+      
+    }
+
+   
+
   }
+
+
+    function AgregarGuiones(){
+      if (paisRandom.name != null) {
+        let letrasRestantes = paisRandom.name.length - letrasMostradas
+        let guionesRestantes = "";
+  
+        for (let i = 0; i < letrasRestantes; i++) {
+          
+          guionesRestantes += "- "
+          
+        }
+          return guionesRestantes;
+     
+      }
+         }
 
 
   const CrearAyuda = (pais) => {
 
-    console.log("Pais: " + pais)
+    let largoPais = pais.length
+    let letraAMostrar = ""
 
-    if (letrasMostradas.length < pais.length) {
-      const indiceAleatorio = Math.floor(Math.random() * pais.length);
-     
+      if (letrasMostradas < largoPais) {
+        
+        letraAMostrar = pais[letrasMostradas]
+        setLetrasMostradas(letrasMostradas + 1)
+      
 
-      if (!letrasMostradas.includes(indiceAleatorio)) {
-        setLetrasMostradas([...letrasMostradas, indiceAleatorio]);
-      } else {
-         CrearAyuda(); 
       }
 
-   
-    }
-  };
-
-
-
-
-  
-
-
+      return letraAMostrar !== "" ?  letraAMostrar.toUpperCase() : null
+    
+  }
 
 
   const BajarSegundos = () => {
@@ -180,6 +219,7 @@ function App() {
 
 
     }else{
+      SaltarMensaje(3)
       setPuntos(puntos-1)
       SetRandomCountry()
     }
@@ -194,9 +234,9 @@ function App() {
       <div className='container'>
       <p style={{color:'white', fontSize:'25px'}} id='intervalo'>Tiempo restante: {secondsLeft}</p>
         <img src={paisRandom.flag} alt='flag' className='flagImg'></img>
+        <p className='LetrasAyuda'>{ayuda} {AgregarGuiones()}</p>
 
         <button onClick={() => ComenzarJuego()} className='startButton' id='startButton'>Empezar</button>
-
 
         <form onSubmit={(e) => CheckAnswer(e)}>
 
@@ -206,16 +246,10 @@ function App() {
           </div>
         </form>
 
-
         <h1 id='puntos'>PUNTOS: {puntos}</h1>
         <div id="mensaje" className="mensaje"></div>
         <button type='submit' id='ayuda' className='button' onClick={() => PedirAyuda()}>Ayuda</button>
-
-           
-         
-
-
-
+        
       </div>
     </>
   );
