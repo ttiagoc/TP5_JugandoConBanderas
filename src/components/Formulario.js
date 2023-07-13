@@ -3,7 +3,7 @@ import '../index.css';
 
 import PropTypes from 'prop-types'
 
-export default function Formulario({ onCheckAnswer, onSaltarMensaje }) {
+export default function Formulario({ onCheckAnswer}) {
   return (
     <>
 
@@ -11,7 +11,7 @@ export default function Formulario({ onCheckAnswer, onSaltarMensaje }) {
 
         <div className='container2' id='gameUtilities'>
           <input type='text' name='nombrePais' placeholder='Adivina el nombre' autoComplete='off'></input>
-          <button type='submit' className='button' onClick={() => onSaltarMensaje()}>Enviar</button>
+          <button type='submit' className='button'>Enviar</button>
         </div>
       </form>
 

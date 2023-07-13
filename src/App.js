@@ -221,7 +221,7 @@ function App() {
         <img src={paisRandom.flag} alt='flag' className='flagImg'></img>
         <p className='LetrasAyuda'>{ayuda} {AgregarGuiones()}</p>
 
-        <Formulario onCheckAnswer={CheckAnswer} onSaltarMensaje={SaltarMensaje} />
+        <Formulario onCheckAnswer={CheckAnswer} />
 
         <h1 id='puntos'>PUNTOS: <span className='TextoColor'>{puntos}</span></h1>
         <div id="mensaje" className="mensaje"></div>
